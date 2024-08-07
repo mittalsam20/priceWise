@@ -6,8 +6,8 @@ const SearchBar = () => {
   return (
     <form onSubmit={handleSubmit} className="flex flex-wrap gap-4 mt-12 ">
       <input
-        type="text"
-        className="searchbar-input"
+        type={"text"}
+        className={"searchbar-input"}
         placeholder={"Enter Product Link"}
       />
 
