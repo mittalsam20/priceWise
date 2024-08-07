@@ -17,7 +17,6 @@ export async function scrapeAndStoreProduct({
 
   try {
     connectToDB();
-    console.log("sss");
     const scrapedProduct = await scrapeAmazonProduct({ url: productUrl });
     if (!scrapedProduct) return;
 
@@ -46,9 +45,6 @@ export async function scrapeAndStoreProduct({
       product,
       { upsert: true, new: true }
     );
-
-    console.log(newProduct);
-
     revalidatePath(`/products/${newProduct._id}`);
   } catch (error: any) {
     console.log(error);
