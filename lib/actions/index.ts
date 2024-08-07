@@ -55,3 +55,26 @@ export async function scrapeAndStoreProduct({
     throw new Error(`Failed to create/update product ${error.message}`);
   }
 }
+
+export async function getProductById({ productId }: { productId: string }) {
+  try {
+    connectToDB();
+    const product = await Product.findOne({ _id: productId });
+    if (!product) return null;
+    return product;
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(`Failed to create/update product ${error.message}`);
+  }
+}
+
+export async function getAllProducts() {
+  try {
+    connectToDB();
+    const products = await Product.find();
+    return products;
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(`Failed to create/update product ${error.message}`);
+  }
+}
