@@ -1,14 +1,19 @@
-import Product from "@/lib/models/product.model";
-import { connectToDB } from "@/lib/mongoose";
-import { generateEmailBody, sendEmail } from "@/lib/nodeMailer";
-import { scrapeAmazonProduct } from "@/lib/scraper";
-import {
-  getAveragePrice,
-  getEmailNotificationType,
-  getHighestPrice,
-  getLowestPrice,
-} from "@/lib/utils";
 import { NextResponse } from "next/server";
+
+import {
+  getLowestPrice,
+  getAveragePrice,
+  getHighestPrice,
+  getEmailNotificationType,
+} from "@/lib/utils";
+import { connectToDB } from "@/lib/mongoose";
+import Product from "@/lib/models/product.model";
+import { scrapeAmazonProduct } from "@/lib/scraper";
+import { generateEmailBody, sendEmail } from "@/lib/nodeMailer";
+
+export const maxDuration = 300;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET() {
   try {
