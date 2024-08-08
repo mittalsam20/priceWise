@@ -4,8 +4,10 @@ import { redirect } from "next/navigation";
 
 import { Product } from "@/types";
 import { formatNumber } from "@/lib/utils";
-import { getProductById } from "@/lib/actions";
+import { getProductById, getSimilarProducts } from "@/lib/actions";
 
+import Modal from "@/components/Modal";
+import ProductCard from "@/components/ProductCard";
 import PriceInfoCard from "@/components/PriceInfoCard";
 
 type Props = {
@@ -28,6 +30,8 @@ const ProductDetails = async ({ params: { id } }: Props) => {
     lowestPrice,
     originalPrice,
   } = product;
+
+  const similarProducts = await getSimilarProducts({ productId: id });
 
   return (
     <div className="product-container">
@@ -141,60 +145,65 @@ const ProductDetails = async ({ params: { id } }: Props) => {
               <PriceInfoCard
                 title="Current Price"
                 iconSrc="/assets/icons/price-tag.svg"
-                value={`${currency} ${formatNumber({
-                  num: currentPrice,
-                })}`}
+                value={`${currency} ${formatNumber({ num: currentPrice })}`}
               />
               <PriceInfoCard
                 title="Average Price"
                 iconSrc="/assets/icons/chart.svg"
-                value={`${currency} ${formatNumber({
-                  num: averagePrice,
-                })}`}
+                value={`${currency} ${formatNumber({ num: averagePrice })}`}
               />
               <PriceInfoCard
                 title="Highest Price"
                 iconSrc="/assets/icons/arrow-up.svg"
-                value={`${currency} ${formatNumber({
-                  num: highestPrice,
-                })}`}
+                value={`${currency} ${formatNumber({ num: highestPrice })}`}
               />
               <PriceInfoCard
                 title="Lowest Price"
                 iconSrc="/assets/icons/arrow-down.svg"
-                value={`${currency} ${formatNumber({
-                  num: lowestPrice,
-                })}`}
+                value={`${currency} ${formatNumber({ num: lowestPrice })}`}
               />
             </div>
           </div>
+          <Modal productId={id} />
         </div>
       </div>
 
       <div className="flex flex-col gap-16">
         <div className="flex flex-col gap-5">
           <h3 className="text-2xl text-secondary font-semibold">
-            Product Description
+            {"Product Description"}
           </h3>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 text-justify">
             {product?.description?.split("\n")}
           </div>
         </div>
 
         <button className="btn w-fit mx-auto flex items-center justify-center gap-3 min-w-[200px]">
           <Image
-            src="/assets/icons/bag.svg"
-            alt="check"
             width={22}
             height={22}
+            alt={"check"}
+            src={"/assets/icons/bag.svg"}
           />
 
-          <Link href="/" className="text-base text-white">
-            Buy Now
+          <Link href="/" className={"text-base text-white"}>
+            {"Buy Now"}
           </Link>
         </button>
       </div>
+
+      {similarProducts && similarProducts?.length > 0 && (
+        <div className="py-14 flex flex-col gap-2 w-full">
+          <p className="section-text">{"Similar Products"}</p>
+
+          <div className="flex flex-wrap gap-10 mt-7 w-full">
+            {similarProducts.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

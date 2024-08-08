@@ -74,3 +74,19 @@ export async function getAllProducts() {
     throw new Error(`Failed to create/update product ${error.message}`);
   }
 }
+
+export async function getSimilarProducts({ productId }: { productId: string }) {
+  try {
+    connectToDB();
+    const currentProduct = await Product.findById(productId);
+    if (!currentProduct) return null;
+
+    const similarProducts = await Product.find({
+      _id: { $ne: productId },
+    }).limit(3);
+    return similarProducts;
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(`Failed to create/update product ${error.message}`);
+  }
+}
