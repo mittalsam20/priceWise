@@ -5,6 +5,8 @@ import Product from "../models/product.mondel";
 import { connectToDB } from "../mongoose";
 import { scrapeAmazonProduct } from "../scraper";
 import { getAveragePrice, getHighestPrice, getLowestPrice } from "../utils";
+import { User } from "@/types";
+import { generateEmailBody, sendEmail } from "../nodeMailer";
 
 export async function scrapeAndStoreProduct({
   productUrl,
@@ -85,6 +87,36 @@ export async function getSimilarProducts({ productId }: { productId: string }) {
       _id: { $ne: productId },
     }).limit(3);
     return similarProducts;
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(`Failed to create/update product ${error.message}`);
+  }
+}
+
+export async function addUserEmailToProduct({
+  productId,
+  userEmail,
+}: {
+  productId: string;
+  userEmail: string;
+}) {
+  try {
+    const product = await Product.findById(productId);
+    if (!product) return;
+
+    const userExists = product.users.some(
+      (user: User) => user.email === userEmail
+    );
+
+    if (!userExists) {
+      product.users.push({ email: userEmail });
+      await product.save();
+      const emailContent = await generateEmailBody({
+        product,
+        type: "WELCOME",
+      });
+      await sendEmail({ emailContent, sendTo: [userEmail] });
+    }
   } catch (error: any) {
     console.log(error);
     throw new Error(`Failed to create/update product ${error.message}`);

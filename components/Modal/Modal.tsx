@@ -3,7 +3,7 @@
 import { FormEvent, Fragment, useState } from "react";
 import Image from "next/image";
 
-// import { addUserEmailToProduct } from "@/lib/actions";
+import { addUserEmailToProduct } from "@/lib/actions";
 import { Dialog, Transition } from "@headlessui/react";
 
 interface Props {
@@ -19,7 +19,7 @@ const Modal = ({ productId }: Props) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // await addUserEmailToProduct(productId, email);
+    await addUserEmailToProduct({ productId, userEmail: email });
 
     setIsSubmitting(false);
     setEmail("");
